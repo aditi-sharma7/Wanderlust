@@ -23,8 +23,12 @@ module.exports.createBooking = async (req, res) => {
 module.exports.showBooking = async (req, res) => {
   const bookings = await Booking.find({ user: req.user._id })
     .populate("listing");
-    
-    res.render("bookings/index", { bookings });
+
+  const validBookings = bookings.filter(b => b.listing);
+  
+  // console.log("USER:", req.user);
+  console.log("BOOKINGS:", validBookings.length);  
+  res.render("bookings/index", { bookings: validBookings });
 };
 module.exports.deleteBooking = async (req, res) => {
   const { bookingId } = req.params;
