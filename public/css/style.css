@@ -97,7 +97,7 @@ body{
 }
 #filters {
    display: flex;
-   flex-wrap: wrap;
+  justify-content: space-between;
    align-items: center;
 }
 .filter{
@@ -110,9 +110,6 @@ body{
    opacity: 1;
    cursor: pointer;
 }
-.filter p {
-   font-size: 0.8rem;
-}
 .tax-info {
    display: none;
 }
@@ -121,6 +118,7 @@ body{
    border-radius: 1rem;
    height: 3.25rem;
    padding: 1rem;
+   margin-top: 1rem;
    margin-left: 2rem;
    display: flex;
    align-items: center;
@@ -140,3 +138,49 @@ body{
    padding: 0.5rem 3rem 0.5rem 3rem !important;
    font-size: 1rem !important;
 }
+.book-btn{
+   background: linear-gradient(90deg,#ff385c,#ff2d55) !important;
+   color: #ebebeb !important;
+
+}
+.card-booking {
+  transition: 0.3s ease;
+}
+
+.card-booking:hover {
+  transform: translateY(-5px);
+}
+
+button:hover {
+  opacity: 0.9;
+}
+/* .form-select {
+  padding: 12px;
+  border-radius: 10px;
+} */
+.guest-btn {
+  width: 35px;
+  height: 35px;
+  padding: 0;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-color: #ddd;
+}
+
+.guest-btn:hover {
+  background-color: #f5f5f5;
+}
+.trip-card{
+   width: 600px !important;
+}
+.wander-btn{
+   background-color: #fe424d !important ;
+   color: white !important;
+}
+
+.trip-card {
+  width: 700px !important;
+}
+

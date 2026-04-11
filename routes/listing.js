@@ -47,5 +47,10 @@ router.get("/:id/edit",
     wrapAsync(listingController.renderEditForm)
 );
 
+router.get("/category/:category",
+    wrapAsync(listingController.filterByCategory)
+);
+
+
 
 module.exports = router;

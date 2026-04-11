@@ -7,7 +7,7 @@ module.exports.index = async (req,res)=>{
     res.render("./listings/index.ejs",{allListings});
 };
 
-module.exports.renderNewForm = (req,res)=>{  // new is being considered as id so place new route before show route
+module.exports.renderNewForm = (req,res)=>{  
     res.render("./listings/new.ejs");
 };
 
@@ -47,7 +47,7 @@ module.exports.createListing = async (req,res)=>{
         }
     }
     let savedListing = await newListing.save();
-    console.log(savedListing);
+    //console.log(savedListing);
     req.flash("success","New Listing Created!");
     res.redirect("/listings");
 };
@@ -80,7 +80,17 @@ module.exports.updateListing = async (req,res)=>{
 module.exports.destroyListing = async (req,res)=>{
     let {id} = req.params;
     const deletedListing = await Listing.findByIdAndDelete(id);
-    console.log(deletedListing);
+    //console.log(deletedListing);
     req.flash("success","Listing Deleted!");
     res.redirect("/listings");
+};
+
+module.exports.filterByCategory = async (req, res) => {
+  const { category } = req.params;
+
+  const listings = await Listing.find({ category });
+
+  res.render("listings/index",{
+    allListings: listings
+  });
 };

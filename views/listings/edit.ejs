@@ -39,6 +39,21 @@
             </div>           
         </div>
         <div class="mb-3">
+                <label for="category" class="form-label">Category</label>
+                <select name="listing[category]" required class="form-control">
+                <option selected hidden><%=listing.category%></option>
+                <option>Trending</option>
+                <option>Rooms</option>
+                <option>Mountains</option>
+                <option>Castles</option>
+                <option>Camping</option>
+                <option>Farms</option>
+                <option>Arctic</option>
+                <option>Domes</option>
+                <option>Boats</option>
+                </select>
+            </div>
+        <div class="mb-3">
             <label for="location" class="form-label">Location</label>
             <input name="listing[location]" type="text" value="<%= listing.location %>" class="form-control" required>
             <div class="invalid-feedback">
