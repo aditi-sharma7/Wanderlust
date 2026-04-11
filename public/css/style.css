@@ -183,4 +183,8 @@ button:hover {
 .trip-card {
   width: 700px !important;
 }
+.img-fluid{
+   height: 220px !important;
+   width: 320px !important;
+}
 
