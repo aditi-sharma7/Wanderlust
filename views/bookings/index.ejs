@@ -19,7 +19,9 @@
     <div class="card trip-card mb-4 col-6 offset-2 shadow-lg border-0 rounded-4 p-2">
       <div class="row g-0">
         <div class="p-1 col-md-6">
-          <img src="<%= booking.listing.image.url %>" class="img-fluid rounded" alt="mytrips">
+          <a href="/listings/<%= booking.listing._id %>">
+            <img src="<%= booking.listing.image.url %>" class="img-fluid rounded" alt="mytrips">
+          </a>
         </div>
         <div class="col-md-6">
           <div class="card-body m-3">
