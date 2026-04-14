@@ -1,10 +1,10 @@
 <% layout("/layouts/boilerplate") -%>
 
-<h2 class="text-center mt-3 mb-4 fw-semibold">My Trips</h2>
+<h2 class="text-center mt-3 mb-4 fw-semibold">My Stays</h2>
 <% if ( !bookings || bookings.length === 0) { %>
   <div >
     <div class="text-center mt-5 ">
-      <h4>No trips yet</h4>
+      <h4>No bookings yet</h4>
       <p class="text-muted">Start exploring and book your first stay!</p>
 
       <a href="/listings" class="btn wander-btn mt-3">
@@ -24,7 +24,7 @@
           </a>
         </div>
         <div class="col-md-6">
-          <div class="card-body m-3">
+          <div class="card-body m-2">
             <h5 class="card-title"><%= booking.listing.title %></h5>
             <div class="lh-1 ">
               <p class="card-text">Check-in: <%= booking.checkIn.toDateString() %></p>
@@ -33,12 +33,23 @@
               <p>Total Price: ₹<%= booking.totalPrice %></p>
             </div>
             <div>
-              <form action="/bookings/<%= booking._id %>?_method=DELETE" method="POST">
-                <button 
-                  class="btn wander-btn">
-                  Cancel my trip
-              </button>
-              </form>
+              <%  const today = new Date();%>
+
+              <% const checkIn = new Date(booking.checkIn);%>
+              <% const checkOut = new Date(booking.checkOut);%>
+
+             <% if (booking.status === "cancelled") { %>
+                <span class="badge bg-danger">Cancelled</span>
+            <% } else if (today > checkOut) { %>
+                <span class="badge bg-success">Visited</span>
+            <% } else if (today >= checkIn && today <= checkOut) { %>
+                <span class="badge bg-warning text-dark">Ongoing</span>
+            <% } else { %>
+                <span class="badge bg-info mb-1">Upcoming</span>
+                <form action="/bookings/<%= booking._id %>/cancel" method="POST">
+                    <button class="btn wander-btn btn-sm">Cancel my trip</button>
+                </form>
+            <% } %>
             </div>
           </div>
         </div>

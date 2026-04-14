@@ -1,0 +1,94 @@
+<% layout('layouts/boilerplate') %>
+
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+
+      <h2 class="mb-1 fw-semibold">How do you want to feel?</h2>
+      <p class="text-muted mb-4">We'll find a destination that matches your emotional intent.</p>
+
+
+      <!-- Mood Cards -->
+      <div class="row g-3 mb-4" id="moodGrid">
+        <% const moods = [
+          { key: "untethered", label: "Untethered", desc: "vast, solitude, awe", icon: "🧭" },
+          { key: "chaotic",    label: "Chaotic Energy", desc: "chaos, street food, no sleep", icon: "⚡" },
+          { key: "romantic",   label: "Romantic", desc: "soft, slow, intimate", icon: "🌅" },
+          { key: "adventurous",label: "Adventurous", desc: "thrill, motion, discovery", icon: "🧗" },
+          { key: "spiritual",  label: "Spiritual", desc: "meaning, ritual, quiet", icon: "🕌" },
+          { key: "nostalgic",  label: "Nostalgic", desc: "memory, warmth, old world", icon: "📷" }
+        ]; %>
+
+        <% for (let mood of moods) { %>
+          <div class="col-md-4 col-6">
+            <div class="mood-card card h-100 text-center p-3"
+              data-mood="<%= mood.desc %>"
+              data-label="<%= mood.label %>"
+              style="cursor:pointer; border: 1.5px solid #dee2e6; border-radius:12px;">
+              <div style="font-size:2rem;"><%= mood.icon %></div>
+              <div class="fw-semibold mt-2"><%= mood.label %></div>
+              <div class="text-muted" style="font-size:0.8rem;"><%= mood.desc %></div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+
+      <!-- Custom Mood Input -->
+      <div class="mb-3">
+        <textarea
+          id="customMood"
+          class="form-control"
+          rows="2"
+          placeholder="Or describe it in your own words… (e.g. I want to feel untethered and small)"
+        ></textarea>
+      </div>
+
+      <button id="generateBtn" class="btn btn-dark w-100 py-2 mb-4">
+        Generate My Trip →
+      </button>
+
+      <!-- Loading Spinner -->
+      <div id="loadingDiv" class="text-center my-4" style="display:none;">
+        <div class="spinner-border text-dark" role="status"></div>
+        <p class="text-muted mt-2">Reading your vibe...</p>
+      </div>
+
+      <!-- Result Section -->
+      <div id="resultSection" style="display:none;" class="mt-4">
+        <div class="card p-4 shadow-sm" style="border-radius:16px;">
+
+          <h4 id="resultDestination" class="fw-bold mb-1"></h4>
+          <p id="resultTagline" class="text-muted mb-3"></p>
+
+          <!-- Palette -->
+          <p class="fw-semibold mb-1" style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; color:#6c63ff;">Color Palette</p>
+          <div id="resultPalette" class="d-flex gap-2 mb-3"></div>
+
+          <!-- Itinerary -->
+          <p class="fw-semibold mb-2" style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; color:#6c63ff;">3-Day Itinerary</p>
+          <div id="resultItinerary" class="mb-3"></div>
+
+          <!-- Tags -->
+          <p class="fw-semibold mb-2" style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; color:#6c63ff;">Mood Tags</p>
+          <div id="resultTags" class="mb-3"></div>
+
+          <!-- Hidden Save Form -->
+          <form action="/mood/save" method="POST" id="saveForm">
+            <input type="hidden" name="moodInput"    id="hiddenMoodInput">
+            <input type="hidden" name="moodLabel"    id="hiddenMoodLabel">
+            <input type="hidden" name="destination"  id="hiddenDestination">
+            <input type="hidden" name="tagline"      id="hiddenTagline">
+            <input type="hidden" name="palette"      id="hiddenPalette">
+            <input type="hidden" name="itinerary"    id="hiddenItinerary">
+            <input type="hidden" name="moodTags"     id="hiddenMoodTags">
+            <button type="submit" class="btn btn-dark w-100">Save to My Mood DNA</button>
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="/js/moodTrip.js"></script>

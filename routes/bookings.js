@@ -17,12 +17,17 @@ router.get(
   isLoggedIn,
   wrapAsync(bookingController.showBooking)
 );
-
-router.delete(
-  "/:bookingId",
-  isLoggedIn,
-  wrapAsync(bookingController.deleteBooking)
+router.post(
+  "/:id/cancel",
+   isLoggedIn, 
+   wrapAsync(bookingController.cancelBooking)
 );
+
+// router.delete(
+//   "/:bookingId",
+//   isLoggedIn,
+//   wrapAsync(bookingController.deleteBooking)
+// );
 
 
 // router.get("/cleanup", async (req, res) => {

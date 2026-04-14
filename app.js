@@ -22,11 +22,13 @@ const listingRouter = require("./routes/listing.js");
 const reviewRouter = require("./routes/review.js");
 const userRouter = require("./routes/user.js");
 const bookingRouter = require("./routes/bookings.js");
+const moodTripRouter = require("./routes/moodTrip");
 
 app.set("view engine","ejs");
 app.set("views",path.join(__dirname,"/views"));
 
 app.use(express.urlencoded({extended:true}));
+app.use(express.json());
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname,"/public")));
 
@@ -96,16 +98,17 @@ app.use("/listings/:id/reviews",reviewRouter);
 app.use("/",userRouter);
 app.use("/listings", bookingRouter);  
 app.use("/bookings", bookingRouter);
+app.use("/mood", moodTripRouter);
 
 
-app.use((req, res, next) => {
-  next(new ExpressError(404, "Page Not Found"));
-});
+// app.use((req, res, next) => {
+//   next(new ExpressError(404, "Page Not Found"));
+// });
 
-app.use((err,req,res,next)=>{
-    let {statusCode = 500,message = "Something went wrong"} = err;
-    res.status(statusCode).render("error.ejs",{message});
-});  
+// app.use((err,req,res,next)=>{
+//     let {statusCode = 500,message = "Something went wrong"} = err;
+//     res.status(statusCode).render("error.ejs",{message});
+// });  
 
 
 app.listen(8080,(req,res) =>{

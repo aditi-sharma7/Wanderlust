@@ -26,15 +26,19 @@ module.exports.showBooking = async (req, res) => {
 
   const validBookings = bookings.filter(b => b.listing);
   
-  // console.log("USER:", req.user);
-  console.log("BOOKINGS:", validBookings.length);  
   res.render("bookings/index", { bookings: validBookings });
 };
-module.exports.deleteBooking = async (req, res) => {
-  const { bookingId } = req.params;
-
-  await Booking.findByIdAndDelete(bookingId);
-
-  req.flash("success", "Trip cancelled");
-  res.redirect("/bookings");
+module.exports.cancelBooking = async (req, res) => {
+    await Booking.findByIdAndUpdate(req.params.id, { status: "cancelled" });
+    req.flash("success", "Booking cancelled successfully");
+    res.redirect("/bookings");
 };
+
+// module.exports.deleteBooking = async (req, res) => {
+//   const { bookingId } = req.params;
+
+//   await Booking.findByIdAndDelete(bookingId);
+
+//   req.flash("success", "Trip cancelled");
+//   res.redirect("/bookings");
+// };

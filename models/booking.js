@@ -13,6 +13,11 @@ const bookingSchema = new Schema({
   checkIn: Date,  checkOut: Date,
   guests: Number,
   totalPrice: Number,
+  status: {
+    type: String,
+    enum: ["upcoming", "ongoing", "visited", "cancelled"],
+    default: "upcoming"
+  },
 });
 
 module.exports = mongoose.model("Booking", bookingSchema);
