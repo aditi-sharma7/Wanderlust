@@ -1,8 +1,5 @@
 const MoodTrip = require("../models/moodTrip");
 const ExpressError = require("../utils/ExpressError");
-// const cohere = require("cohere-ai");
-
-// cohere.init(process.env.COHERE_API_KEY);
 
 
 // Render the mood planner page
@@ -104,7 +101,7 @@ if (!isIndia) {
     res.redirect("back");
   }
 };
-// Save generated trip to MongoDB
+// Save generated trip
 module.exports.saveTrip = async (req, res) => {
   const { moodInput, moodLabel, destination, tagline, palette, itinerary, moodTags } = req.body;
 

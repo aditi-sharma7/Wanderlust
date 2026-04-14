@@ -101,14 +101,14 @@ app.use("/bookings", bookingRouter);
 app.use("/mood", moodTripRouter);
 
 
-// app.use((req, res, next) => {
-//   next(new ExpressError(404, "Page Not Found"));
-// });
+app.use((req, res, next) => {
+  next(new ExpressError(404, "Page Not Found"));
+});
 
-// app.use((err,req,res,next)=>{
-//     let {statusCode = 500,message = "Something went wrong"} = err;
-//     res.status(statusCode).render("error.ejs",{message});
-// });  
+app.use((err,req,res,next)=>{
+    let {statusCode = 500,message = "Something went wrong"} = err;
+    res.status(statusCode).render("error.ejs",{message});
+});  
 
 
 app.listen(8080,(req,res) =>{

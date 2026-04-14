@@ -14,7 +14,7 @@
   </div>
 
 <% } else { %>
-  <% bookings.forEach(booking => { %>
+  <% bookings.reverse().forEach(booking => { %>
     <% if (!booking.listing) return; %>
     <div class="card trip-card mb-4 col-6 offset-2 shadow-lg border-0 rounded-4 p-2">
       <div class="row g-0">

@@ -28,7 +28,7 @@ const initDB = async () => {
             coordinates: [data[0].lon, data[0].lat]
             };
             await listing.save();
-            console.log("Updated:", listing.location);
+            //console.log("Updated:", listing.location);
         } else {
             console.log("Location not found:", listing.location);
         }

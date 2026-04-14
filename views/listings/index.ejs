@@ -1,5 +1,5 @@
 <% layout("/layouts/boilerplate") -%>
-
+     <div class="filters-container">
      <div id="filters" class="d-flex justify-content-start">
         <div class="filter">
             <a href="/listings/category/Rooms"  class="nav-link">
@@ -62,6 +62,7 @@
             </a>
         </div>
      </div>
+    </div>
     <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 mt-3">
         <%for(let listing of allListings){%>
             <a href="/listings/<%=listing._id%>" class="listing-link">
@@ -79,17 +80,5 @@
             </a>
         <%}%>        
     </div>
-    <script>
-        let taxSwitch = document.getElementById("switchCheckDefault");
-        taxSwitch.addEventListener("click", ()=>{
-            let taxInfo = document.getElementsByClassName("tax-info");
-            for(info of taxInfo){
-                if(info.style.display != "inline"){
-                    info.style.display = "inline";
-                }else{
-                    info.style.display = "none";
-                }
-            }        
-        });
-    </script>
+
     
