@@ -57,8 +57,45 @@
                 </div>
               <% } %>
 
+              <!-- Best Time to Visit -->
+              <% if (trip.bestTimeToVisit && trip.bestTimeToVisit.months.length) { %>
+                <div class="mt-3 mb-2">
+                  <p class="fw-semibold mb-1" style="font-size:0.75rem; text-transform:uppercase; color:#6c63ff;">Best Time to Visit</p>
+                  <div class="mb-1 mt-2">
+                    <% for (let m of trip.bestTimeToVisit.months) { %>
+                      <span class="badge me-1" style="background:#eeedfe; color:#534ab7;"><%= m %></span>
+                    <% } %>
+                  </div>
+                  <p class="mb-0 ms-1" style="font-size:14px;"><%= trip.bestTimeToVisit.weather %></p>
+                  <% if (trip.bestTimeToVisit.avoidMonths.length) { %>
+                    <p class="mb-0 ms-1" style="font-size:14px;">
+                      <b>Avoid:</b> <%= trip.bestTimeToVisit.avoidMonths.join(", ") %> — <%= trip.bestTimeToVisit.avoidReason %>
+                    </p>
+                  <% } %>
+                </div>
+              <% } %>
+
+              <!-- Packing List -->
+              <% if (trip.packingList && trip.packingList.essentials.length) { %>
+                <div class="mt-2 mb-3">
+                  <p class="fw-semibold mb-1" style="font-size:0.75rem; text-transform:uppercase; color:#6c63ff;">Packing List</p>
+                  <% const categories = ["essentials","clothing","accessories","toiletries","documents"]; %>
+                  <% for (let cat of categories) { %>
+                    <% if (trip.packingList[cat] && trip.packingList[cat].length) { %>
+                      <p class="mb-1 mt-1 fw-semibold badge me-1" style="font-size:0.8rem; text-transform:capitalize; background:#eeedfe; color:#534ab7;"><%= cat %></p>
+                      <div class="mb-2">
+                        <% for (let item of trip.packingList[cat]) { %>
+                          <span class="ms-1 mb-1" style="font-weight: 400; font-size:14px;">- <%= item %></span><br>
+                        <% } %>
+                      </div>
+                    <% } %>
+                  <% } %>
+                </div>
+              <% } %>
+
               <!-- Mood Tags -->
               <div class="mt-3 mb-3">
+                 <p class="fw-semibold mb-1" style="font-size:0.75rem; text-transform:uppercase; color:#6c63ff;">Mood Tags</p>
                 <% for (let tag of trip.moodTags) { %>
                   <span class="badge me-1" style="background:#eeedfe; color:#534ab7;"><%= tag %></span>
                 <% } %>

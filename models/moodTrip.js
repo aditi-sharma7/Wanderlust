@@ -26,6 +26,22 @@ const moodTripSchema = new mongoose.Schema(
     palette: [String],
     itinerary: [itineraryDaySchema],
     moodTags: [String],
+
+    bestTimeToVisit: {
+      months: [String],
+      weather: String,
+      avoidMonths: [String],
+      avoidReason: String,
+    },
+
+    packingList: {
+      essentials: [String],
+      clothing: [String],
+      accessories: [String],
+      toiletries: [String],
+      documents: [String],
+    },
+
     actualMoodLog: {
       type: String,
       default: "",

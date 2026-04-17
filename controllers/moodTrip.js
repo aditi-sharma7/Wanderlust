@@ -46,11 +46,24 @@ module.exports.generateTrip = async (req, res) => {
           { "day": 2, "plan": "short activity description" },
           { "day": 3, "plan": "short activity description" }
         ],
-        "moodTags": ["tag1", "tag2", "tag3", "tag4", "tag5"]
+        "moodTags": ["tag1", "tag2", "tag3", "tag4", "tag5"],
+        "bestTimeToVisit": {
+          "months": ["Month1", "Month2", "Month3"],
+          "weather": "one sentence describing the weather during best months",
+          "avoidMonths": ["Month1", "Month2"],
+          "avoidReason": "one short reason why to avoid those months"
+        },
+        "packingList": {
+          "essentials": ["item1", "item2", "item3"],
+          "clothing": ["item1", "item2", "item3"],
+          "accessories": ["item1", "item2", "item3"],
+          "toiletries": ["item1", "item2"],
+          "documents": ["item1", "item2"]
+        }
       }`,
           },
         ],
-        max_tokens: 400,
+        max_tokens: 700,
         temperature: 0.7,
       }),
     });
@@ -63,7 +76,6 @@ module.exports.generateTrip = async (req, res) => {
 
     const data = await response.json();
 
-    // Cohere Chat API v2 response structure
     const raw = data?.message?.content?.[0]?.text;
 
     if (!raw) {
@@ -71,7 +83,6 @@ module.exports.generateTrip = async (req, res) => {
       throw new ExpressError(500, "Invalid response from Cohere");
     }
 
-    // Extract JSON object safely
     const jsonMatch = raw.replace(/```json|```/g, "").trim().match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
       console.error("No JSON found in Cohere response:", raw);
@@ -86,12 +97,31 @@ module.exports.generateTrip = async (req, res) => {
       throw new ExpressError(500, "Invalid JSON from Cohere");
     }
 
-// Safety check — ensure destination is in India
-const isIndia = result.destination?.toLowerCase().includes("india");
-if (!isIndia) {
-  console.error("Non-India destination returned:", result.destination);
-  throw new ExpressError(500, "Only Indian destinations are supported");
-}
+    // Safety check — ensure destination is in India
+    const isIndia = result.destination?.toLowerCase().includes("india");
+    if (!isIndia) {
+      console.error("Non-India destination returned:", result.destination);
+      throw new ExpressError(500, "Only Indian destinations are supported");
+    }
+
+    // Fallbacks in case Cohere omits the new fields
+    if (!result.bestTimeToVisit) {
+      result.bestTimeToVisit = {
+        months: [],
+        weather: "Information not available",
+        avoidMonths: [],
+        avoidReason: ""
+      };
+    }
+    if (!result.packingList) {
+      result.packingList = {
+        essentials: [],
+        clothing: [],
+        accessories: [],
+        toiletries: [],
+        documents: []
+      };
+    }
 
     res.json({ success: true, result, moodInput, moodLabel });
 
@@ -101,9 +131,15 @@ if (!isIndia) {
     res.redirect("back");
   }
 };
+
+
+
 // Save generated trip
 module.exports.saveTrip = async (req, res) => {
-  const { moodInput, moodLabel, destination, tagline, palette, itinerary, moodTags } = req.body;
+  const { 
+    moodInput, moodLabel, destination, tagline, palette, 
+    itinerary, moodTags, bestTimeToVisit, packingList  // ← add these
+  } = req.body;
 
   const trip = new MoodTrip({
     author: req.user._id,
@@ -114,6 +150,8 @@ module.exports.saveTrip = async (req, res) => {
     palette: JSON.parse(palette),
     itinerary: JSON.parse(itinerary),
     moodTags: JSON.parse(moodTags),
+    bestTimeToVisit: JSON.parse(bestTimeToVisit),  // ← add
+    packingList: JSON.parse(packingList),           // ← add
   });
 
   await trip.save();
