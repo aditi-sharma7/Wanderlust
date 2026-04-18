@@ -27,11 +27,12 @@ module.exports.showListing = async (req,res)=>{
 };
 
 module.exports.createListing = async (req,res)=>{
-    let url = req.file.path;
-    let filename = req.file.filename;
+    let urls = req.files.map(f => ({ url: f.path}));
+    let filenames = req.files.map(f => ({filename: f.filename }));
     const newListing = new Listing(req.body.listing);
     newListing.owner = req.user._id;
-    newListing.image = {url, filename};
+    // Line 34 - CORRECT
+    newListing.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
     let mapUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(req.body.listing.location)}&format=json&limit=1`;
 
     let response = await fetch(mapUrl, {
@@ -59,18 +60,20 @@ module.exports.renderEditForm = async (req,res)=>{
         req.flash("error","Listing does not exist!");
         return res.redirect("/listings");
     }
-    let originalImageUrl = listing.image.url;
-    originalImageUrl = originalImageUrl.replace("/upload","/upload/w_250");
+   let originalImageUrl = listing.images?.length 
+    ? listing.images[0].url.replace("/upload", "/upload/w_250") 
+    : "";
+    originalImageUrl = originalImageUrl.replace("/upload", "/upload/w_250");
     res.render("./listings/edit.ejs",{listing, originalImageUrl});
 };
 
 module.exports.updateListing = async (req,res)=>{
     let {id} = req.params;
     let listing = await Listing.findByIdAndUpdate(id, {...req.body.listing});
-    if(typeof req.file !== "undefined") {
-        let url = req.file.path;
-        let filename = req.file.filename;
-        listing.image = {url, filename};
+    if(typeof req.files !== "undefined" && req.files.length > 0) {
+        let urls = req.files.map(f => ({ url: f.path}));
+        let filenames = req.files.map(f => ({filename: f.filename }));
+        listing.images = req.files.map(f => ({ url: f.path, filename: f.filename }));
         await listing.save();
     }
     req.flash("success","Listing Updated!");

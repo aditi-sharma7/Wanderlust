@@ -10,10 +10,12 @@ const listingSchema = new Schema({
     description : {
         type : String,
     },
-    image : {
+    images :  [
+        {
         url: String,
-        filename: String,
-    },
+        filename: String
+        }
+    ],
     price : {
         type : Number,
     },
@@ -22,7 +24,7 @@ const listingSchema = new Schema({
     enum: [
       "Trending",
       "Rooms",
-      "Iconic Cities",
+      "Iconic",
       "Mountains",
       "Castles",
       "Camping",

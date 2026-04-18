@@ -18,8 +18,8 @@
                 </div>
             </div>
             <div class="mb-3">
-                <label for="image" class="form-label">Upload Listing Image</label>
-                <input name="listing[image]" type="file" class="form-control" required>
+                <label for="image" class="form-label">Upload Atmost 5 Listing Images</label>
+                <input name="listing[image]" type="file" class="form-control" required  multiple accept="image/*">
             </div>
             <div class="row">
                 <div class="mb-3 col-md-4">
@@ -50,7 +50,7 @@
                 <option>Arctic</option>
                 <option>Domes</option>
                 <option>Boats</option>
-                <option>Iconic Cities</option>
+                <option value="Iconic">Iconic Cities</option>
                 </select>
                 <div class="invalid-feedback">
                     Please select a category.

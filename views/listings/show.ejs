@@ -1,14 +1,45 @@
 <% layout("/layouts/boilerplate") -%>
 
 <div class="row mt-3">
-    <div class="col-8 offset-3">
+    <div class="col-8 offset-2">
         <h3 class="fw-medium"><%= listing.title %></h3>
     </div>
-    <div class="card col-6 offset-3 show-card listing-card">
-        <img src="<%=listing.image.url%>" 
-        class="card-img-top show-img" 
-        alt="listing_image"
-        >
+    <div class="card col-8 offset-2 show-card listing-card">
+        <%
+            const imgs = listing.images;
+            const previewCount = Math.min(imgs.length, 5);
+        %>
+
+        <div class="listing-gallery <%= imgs.length === 1 ? 'single' : imgs.length === 2 ? 'two' : imgs.length === 3 ? 'three' : imgs.length === 4 ? 'four' : '' %>">
+            <% imgs.slice(0, previewCount).forEach((img, i) => { %>
+                <div class="gallery-cell cell-<%= i %>" onclick="openLightbox(<%= i %>)">
+                    <img src="<%= img.url %>" alt="listing image <%= i+1 %>">
+                    <% if(i === previewCount - 1 && imgs.length > 5) { %>
+                        <div class="more-overlay">
+                            <span>+<%= imgs.length - 5 %></span>
+                        </div>
+                    <% } %>
+                </div>
+            <% }) %>
+
+            <!-- Show all photos button -->
+            <% if(imgs.length > 1) { %>
+                <button class="show-all-btn" onclick="openLightbox(0)">
+                    <i class="fa-solid fa-border-all"></i> Show all photos
+                </button>
+            <% } %>
+        </div>
+
+        <!-- Full Lightbox -->
+        <div class="lightbox-overlay" id="lightbox">
+            <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+            <button class="lightbox-nav prev" onclick="changePhoto(-1)">&#8249;</button>
+            <div class="lightbox-content">
+                <img id="lightbox-img" src="" alt="Full view">
+                <p class="lightbox-counter" id="lightbox-counter"></p>
+            </div>
+            <button class="lightbox-nav next" onclick="changePhoto(1)">&#8250;</button>
+        </div>
         <div class="card-body mt-3">
             <p class="card-text">Description : <%= listing.description %> <br></p> 
             <p class="card-text">Price : &#x20b9; <%= listing.price.toLocaleString("en-IN") %>/ night <br></p>   
@@ -18,9 +49,9 @@
         <% if(currUser && currUser._id.equals(listing.owner._id)) { %>
             <br>
             <div class="btns d-flex gap-2">
-                <a class="btn btn-dark edit-btn col-2" href="/listings/<%=listing._id%>/edit">Edit</a>
+                <a class="btn btn-dark edit-btn col-1" href="/listings/<%=listing._id%>/edit">Edit</a>
                 <form method="post" action="/listings/<%=listing._id%>?_method=DELETE">
-                    <button class="btn btn-dark offset-3">Delete</button>
+                    <button class="btn btn-dark offset-4">Delete</button>
                 </form>
             </div>
         <% } %>
@@ -36,7 +67,7 @@
             </div>
         <hr>
         <% if (currUser) { %>
-            <div class="card-booking shadow-lg border-0 rounded-4 p-4" >
+            <div class="card-booking shadow-lg border-0 rounded-4 p-4 mx-4" >
                 <form action="/listings/<%= listing._id %>/bookings" 
                     method="POST" 
                     class="needs-validation-reserve"
@@ -96,7 +127,7 @@
             </div>
         <% } %>
     </div>
-    <div class="col-6 offset-3 mb-3">
+    <div class=" col-8 offset-2 mb-3">
         <% if(currUser) { %>
             <hr>
             <h4>Leave a Review</h4>
@@ -132,7 +163,7 @@
             <div class="row">
                 <p><b>All Reviews</b></p>
                 <% for(review of listing.reviews){ %>
-                    <div class="card col-5 ms-4 mb-3">
+                    <div class="card col-5 mx-4 mb-3">
                         <div class="card-body mb-2">
                             <h5 class="card-title">@<%=review.author.username%></h5>
                             <p class="starability-result card-text" data-rating="<%= review.rating %>"></p>             
@@ -149,9 +180,9 @@
         <% } %>
         <hr >
     </div>
-    <div class="col-8 offset-3 mb-3">
+    <div class="col-8 offset-2 mb-3">
         <h3>Where you'll be</h3>
-        <div id="map">
+        <div id="map" >
         </div>
         <script>
             const coordinates = <%- JSON.stringify(listing.geometry.coordinates) %>;
@@ -163,3 +194,37 @@
     </div>
 </div>
 <script src="/js/booking.js"></script>
+<script>
+    const allImages = <%- JSON.stringify(listing.images.map(i => i.url)) %>;
+    let currentIndex = 0;
+
+    function openLightbox(index) {
+        currentIndex = index;
+        document.getElementById('lightbox-img').src = allImages[currentIndex];
+        document.getElementById('lightbox-counter').textContent = `${currentIndex + 1} / ${allImages.length}`;
+        document.getElementById('lightbox').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+        document.getElementById('lightbox').classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    function changePhoto(dir) {
+        currentIndex = (currentIndex + dir + allImages.length) % allImages.length;
+        document.getElementById('lightbox-img').src = allImages[currentIndex];
+        document.getElementById('lightbox-counter').textContent = `${currentIndex + 1} / ${allImages.length}`;
+    }
+
+    document.getElementById('lightbox').addEventListener('click', function(e) {
+        if (e.target === this) closeLightbox();
+    });
+
+    document.addEventListener('keydown', function(e) {
+        if (!document.getElementById('lightbox').classList.contains('active')) return;
+        if (e.key === 'ArrowRight') changePhoto(1);
+        if (e.key === 'ArrowLeft') changePhoto(-1);
+        if (e.key === 'Escape') closeLightbox();
+    });
+</script>
