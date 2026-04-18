@@ -13,6 +13,8 @@ router.post("/generate", isLoggedIn, wrapAsync(moodTripController.generateTrip))
 // Save trip to DB
 router.post("/save", isLoggedIn, wrapAsync(moodTripController.saveTrip));
 
+router.post("/travel-match", isLoggedIn, wrapAsync(moodTripController.findTravelMatches));
+
 // User's mood trip history
 router.get("/history", isLoggedIn, wrapAsync(moodTripController.getHistory));
 

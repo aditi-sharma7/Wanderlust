@@ -16,7 +16,7 @@
       <% if (trips.length === 0) { %>
         <div class="text-center text-muted pt-5">
           <p>No mood trips yet.</p>
-          <a href="/mood" class="btn wander-btn">
+          <a href="/mood" class="btn wander-btn btn-outline-danger">
             Generate your first one
           </a>
         </div>
@@ -116,9 +116,9 @@
                       placeholder="How did you actually feel on this trip?"
                       required
                     />
-                    <button class="btn btn-sm btn-outline-dark" type="submit">Save Log</button>
+                    <button class="btn btn-sm wander-btn btn-outline-danger" type="submit">Save Log</button>
                     <div class="invalid-feedback">
-                      Please enter your experience.
+                      Please share your experience.
                     </div>
                   </div>
                 </form>

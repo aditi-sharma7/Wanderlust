@@ -101,7 +101,7 @@ function renderResult(result, moodInput, moodLabel) {
   const tagsDiv = document.getElementById("resultTags");
   tagsDiv.innerHTML = result.moodTags
     .map((t) => `
-    <p class="mb-1 badge me-1" style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; font-weight:600; background:#eeedfe;color:#534ab7;">Mood Tags</p>
+    <p class="mb-1 badge me-1" style="font-size:0.8rem; text-transform:uppercase; letter-spacing:0.05em; font-weight:600; background:#eeedfe;color:#534ab7;"></p>
     <span class="badge me-1" style="background:#eeedfe;color:#534ab7;">${t}</span>`)
     .join("");
   

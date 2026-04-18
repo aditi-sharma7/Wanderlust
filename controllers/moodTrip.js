@@ -1,5 +1,7 @@
 const MoodTrip = require("../models/moodTrip");
 const ExpressError = require("../utils/ExpressError");
+const Booking = require("../models/booking.js");
+
 
 
 // Render the mood planner page
@@ -63,7 +65,7 @@ module.exports.generateTrip = async (req, res) => {
       }`,
           },
         ],
-        max_tokens: 700,
+        max_tokens: 600,
         temperature: 0.7,
       }),
     });
@@ -133,7 +135,6 @@ module.exports.generateTrip = async (req, res) => {
 };
 
 
-
 // Save generated trip
 module.exports.saveTrip = async (req, res) => {
   const { 
@@ -158,6 +159,31 @@ module.exports.saveTrip = async (req, res) => {
   req.flash("success", "Trip saved to your Mood DNA!");
   res.redirect("/mood/history");
 };
+
+
+module.exports.findTravelMatches = async (req, res) => {
+  const { listingId, checkIn, checkOut } = req.body;
+
+  // Save/update current user booking match intent (optional)
+  // Find others booked SAME listing with OVERLAPPING dates
+  const matches = await Booking.find({
+    listing: listingId,
+    user: { $ne: req.user._id },           // exclude self
+    status: { $nin: ["cancelled"] },        // skip cancelled
+    checkIn:  { $lte: new Date(checkOut) }, // their checkin before your checkout
+    checkOut: { $gte: new Date(checkIn) }   // their checkout after your checkin
+  }).populate("user", "username email")
+    .populate("listing", "title location");
+
+  res.json({
+    count: matches.length,
+    matches,
+    message: matches.length > 0
+      ? `You and ${matches.length} traveler${matches.length > 1 ? "s" : ""} are visiting ${matches[0]?.listing?.title} at the same time!`
+      : "No matches yet — you're a pioneer!"
+  });
+};
+
 
 // Show all saved mood trips of current user
 module.exports.getHistory = async (req, res) => {

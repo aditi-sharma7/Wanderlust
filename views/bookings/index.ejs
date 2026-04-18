@@ -1,59 +1,119 @@
 <% layout("/layouts/boilerplate") -%>
 
 <h2 class="text-center mt-3 mb-4 fw-semibold">My Stays</h2>
-<% if ( !bookings || bookings.length === 0) { %>
-  <div >
-    <div class="text-center mt-5 ">
-      <h4>No bookings yet</h4>
-      <p class="text-muted">Start exploring and book your first stay!</p>
 
-      <a href="/listings" class="btn wander-btn mt-3">
-        Explore Listings
-      </a>
-    </div>
+<% if (!bookings || bookings.length === 0) { %>
+  <div class="text-center mt-5">
+    <h4>No bookings yet</h4>
+    <p class="text-muted">Start exploring and book your first stay!</p>
+    <a href="/listings" class="btn wander-btn mt-3">Explore Listings</a>
   </div>
 
 <% } else { %>
-  <% bookings.reverse().forEach(booking => { %>
-    <% if (!booking.listing) return; %>
-    <div class="card trip-card mb-4 col-6 offset-2 shadow-lg border-0 rounded-4 p-2">
-      <div class="row g-0">
-        <div class="p-1 col-md-6">
-          <a href="/listings/<%= booking.listing._id %>">
-            <img src="<%= booking.listing.image.url %>" class="img-fluid rounded" alt="mytrips">
-          </a>
-        </div>
-        <div class="col-md-6">
-          <div class="card-body m-2">
-            <h5 class="card-title"><%= booking.listing.title %></h5>
-            <div class="lh-1 ">
-              <p class="card-text">Check-in: <%= booking.checkIn.toDateString() %></p>
-              <p class="card-text">Check-out: <%= booking.checkOut.toDateString() %></p>
-              <p>Guests: <%= booking.guests %></p>
-              <p>Total Price: ₹<%= booking.totalPrice %></p>
-            </div>
-            <div>
-              <%  const today = new Date();%>
+  <div class="col-7 offset-3 mb-3  pb-5 mt-5">
+    <% bookingsWithMatches.reverse().forEach(({ booking, matches }) => { %>
+      <% if (!booking.listing) return; %>
 
-              <% const checkIn = new Date(booking.checkIn);%>
-              <% const checkOut = new Date(booking.checkOut);%>
+      <div class="card book-card mt-4 rounded-4 shadow-sm" style="max-width: 780px;">
 
-             <% if (booking.status === "cancelled") { %>
-                <span class="badge bg-danger">Cancelled</span>
-            <% } else if (today > checkOut) { %>
-                <span class="badge bg-success">Visited</span>
-            <% } else if (today >= checkIn && today <= checkOut) { %>
-                <span class="badge bg-warning text-dark">Ongoing</span>
-            <% } else { %>
-                <span class="badge bg-info mb-1">Upcoming</span>
-                <form action="/bookings/<%= booking._id %>/cancel" method="POST">
-                    <button class="btn wander-btn btn-sm">Cancel my trip</button>
-                </form>
-            <% } %>
+        <%/* ── Top row: image + details ── */%>
+        <div class="row g-0" style="min-height: 220px;">
+
+          <%/* Image column */%>
+          <div class="col-md-5" style="min-height: 220px;">
+            <a href="/listings/<%= booking.listing._id %>" class="d-block h-100">
+              <img
+                src="<%= booking.listing.image.url %>"
+                alt="<%= booking.listing.title %>"
+                style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; !important"
+              >
+            </a>
+          </div>
+
+          <%/* Details column */%>
+          <div class="col-md-7 d-flex flex-column justify-content-center">
+            <div class="card-body px-4 py-3">
+
+              <h5 class="fw-semibold mb-3"><%= booking.listing.title %></h5>
+
+              <div class="text-muted small mb-3" style="line-height: 2;">
+                <div><span class="fw-medium text-dark">Check-in:</span>&nbsp;<%= booking.checkIn.toDateString() %></div>
+                <div><span class="fw-medium text-dark">Check-out:</span>&nbsp;<%= booking.checkOut.toDateString() %></div>
+                <div><span class="fw-medium text-dark">Guests:</span>&nbsp;<%= booking.guests %></div>
+                <div><span class="fw-medium text-dark">Total:</span>&nbsp;₹<%= booking.totalPrice.toLocaleString('en-IN') %></div>
+              </div>
+
+              <%
+                const today    = new Date();
+                const checkIn  = new Date(booking.checkIn);
+                const checkOut = new Date(booking.checkOut);
+              %>
+
+              <% if (booking.status === "cancelled") { %>
+                <span class="badge rounded-pill bg-danger px-3 py-2">Cancelled</span>
+
+              <% } else if (today > checkOut) { %>
+                <span class="badge rounded-pill bg-success px-3 py-2">Visited</span>
+
+              <% } else if (today >= checkIn && today <= checkOut) { %>
+                <span class="badge rounded-pill bg-warning text-dark px-3 py-2">Ongoing</span>
+
+              <% } else { %>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                  <span class="badge rounded-pill bg-info text-dark px-3 py-2">Upcoming</span>
+                  <form action="/bookings/<%= booking._id %>/cancel" method="POST" class="m-0">
+                    <button class="btn btn-sm wander-btn btn-outline-danger rounded-pill px-3">Cancel trip</button>
+                  </form>
+                </div>
+              <% } %>
+
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  <% }) %>
-<% } %>
+        </div><%/* end row */%>
+
+        <%/* ── Match banner INSIDE the card, below the row ── */%>
+        <% if (matches && matches.length > 0 && booking.status !== "cancelled") { %>
+          <div class="px-3 py-2 d-flex align-items-center flex-wrap gap-2"
+               style="background: #f0f7ff; border-top: 1px solid #cce0ff;">
+
+            <p class="mb-0 ms-2 small fw-semibold text-primary me-1">
+              You and <strong><%= matches.length %></strong>
+              other traveler<%= matches.length > 1 ? 's' : '' %> visit at the same time!
+            </p>
+
+            <% if (matches.length > 2) { %>
+              <% for (let i = 0; i < 2; i++) { %>
+                <span class="badge rounded-pill text-bg-light border"
+                      style="font-size: 12px; padding: 5px 10px;">
+                  👤 <%= matches[i].user.username %>
+                </span>
+              <% } %>
+              <span
+                class="badge rounded-pill text-bg-light border position-relative traveler-trigger"
+                style="font-size: 12px; padding: 5px 10px; cursor: pointer;">
+                +<%= matches.length - 2 %>
+                <div class="traveler-card shadow">
+                  <% for (let m of matches) { %>
+                    <div class="traveler-item mt-1 ms-1 d-flex align-items-start">
+                      👤 <%= m.user.username %>
+                    </div>
+                  <% } %>
+                </div>
+              </span>
+            <% } else { %>
+              <% for (let m of matches) { %>
+                <span class="badge rounded-pill text-bg-light border"
+                      style="font-size: 12px; padding: 5px 10px;">
+                  👤 <%= m.user.username %>
+                </span>
+              <% } %>
+            <% } %>
+
+          </div><%/* end match banner */%>
+        <% } %>
+
+      </div><%/* end card */%>
+
+    <% }) %>
+  </div><%/* end col */%>
+<% } %> 

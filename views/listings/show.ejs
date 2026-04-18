@@ -35,7 +35,7 @@
                 </div>
             </div>
         <hr>
-        <% if (currUser && currUser._id.toString() !== listing.owner._id.toString()) { %>
+        <% if (currUser) { %>
             <div class="card-booking shadow-lg border-0 rounded-4 p-4" >
                 <form action="/listings/<%= listing._id %>/bookings" 
                     method="POST" 
