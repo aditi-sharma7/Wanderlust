@@ -32,7 +32,7 @@ module.exports.createBooking = async (req, res) => {
 
   req.flash("success", 
     matches.length > 0
-      ? `Booking confirmed! ${matches.length -1} other traveler(s) visiting same time!`
+      ? `Booking confirmed! ${matches.length } other traveler(s) visiting same time!`
       : "Booking confirmed! You're the first one here"
   );
     res.redirect(`/bookings`);
