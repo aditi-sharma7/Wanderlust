@@ -1,9 +1,12 @@
 const mongoose = require('mongoose');
 const initData = require('./data.js');
 const Listing = require('../models/listing.js');
+const User = require("../models/user.js");
 
+require("dotenv").config({ path: "../.env" });
+const dbUrl = process.env.ATLASDB_URL;
 main()
-.then(()=>{
+.then(() => {
     console.log("connection successful");
 })
 .catch((err) => {
@@ -11,32 +14,19 @@ main()
 });
 
 async function main() {
-  await mongoose.connect('mongodb://127.0.0.1:27017/wanderlust');
+    await mongoose.connect(dbUrl);
 }
-const initDB = async () => {
-    let listings = await Listing.find({ geometry: { $exists: false } });
-    for (let listing of listings) {
-        let url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(listing.location)}&format=json&limit=1`;
-        let res = await fetch(url, {
-            headers: { "User-Agent": "wanderlust-app" }
-        });
 
-        let data = await res.json();
-        if (data.length > 0) {
-            listing.geometry = {
-            type: "Point",
-            coordinates: [data[0].lon, data[0].lat]
-            };
-            await listing.save();
-            //console.log("Updated:", listing.location);
-        } else {
-            console.log("Location not found:", listing.location);
-        }
-    }
+const initDB = async () => {
     await Listing.deleteMany({});
-    
-    initData.data = initData.data.map((obj) => ({ ...obj, owner: "69a95e864fd5befa382d9e34"}));
-    await Listing.insertMany(initData.data);
-    console.log("Data initialized");
-}
+
+    const listing = initData.map((obj) => ({
+        ...obj,
+        owner: "69b2ca91a413ba0fd369a8e9"
+    }));
+
+    // await Listing.insertMany(listing);
+    console.log("Data initialized successfully!");
+};
+
 initDB();
